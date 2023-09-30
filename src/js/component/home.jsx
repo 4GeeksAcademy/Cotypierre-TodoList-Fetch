@@ -1,10 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 //include images into your bundle
 import rigoImage from "../../img/rigo-baby.jpg";
 
 //create your first component
 const Home = () => {
+
+	useEffect(()=>{
+		fetch('https://playground.4geeks.com/apis/fake/todos/user/cotypierre')
+			.then(resp => {
+				
+				return resp.json(); // (regresa una promesa) will try to parse the result as json as return a promise that you can .then for results
+			})
+			.then(data => {
+				//Aquí es donde debe comenzar tu código después de que finalice la búsqueda
+				console.log(data);
+				setTodos(data)
+			})
+			.catch(error => {
+				//manejo de errores
+				console.log(error);
+			});
+	},[])
+
+
+
 	const [inputValeu, setInputValeu] = useState("");
 	const [todos, setTodos] = useState ([]);
 	return (
@@ -17,7 +37,28 @@ const Home = () => {
 					value={inputValeu}
 					onKeyDown={(e) => {
 						if (e.key === "Enter") {
-							setTodos(todos.concat([inputValeu]));
+
+							fetch('https://playground.4geeks.com/apis/fake/todos/user/cotypierre', {
+								method: "PUT",
+								body: JSON.stringify([...todos,{label: inputValeu, done: false}]),
+								headers: {
+									"Content-Type": "application/json"
+								}
+								})
+								.then(resp => {
+									
+									return resp.json(); // (regresa una promesa) will try to parse the result as json as return a promise that you can .then for results
+								})
+								.then(data => {
+									//Aquí es donde debe comenzar tu código después de que finalice la búsqueda
+									console.log(data); //esto imprimirá en la consola el objeto exacto recibido del servidor
+									setTodos([...todos,{label: inputValeu, done: false}]);
+								})
+								.catch(error => {
+									//manejo de errores
+									console.log(error);
+								});
+
 							setInputValeu("");
 						}
 						}}
@@ -26,7 +67,31 @@ const Home = () => {
 				<ul>
 					{todos.map((item,index) => (
 						<li key={index}>
-							{item} <i className="fas fa-trash-alt" onClick={() => setTodos(todos.filter((t, currentIndex) => index !=currentIndex))}></i>
+							{item.label} <i className="fas fa-trash-alt" onClick={() => {
+
+							fetch('https://playground.4geeks.com/apis/fake/todos/user/cotypierre', {
+								method: "PUT",
+								body: JSON.stringify(todos),
+								headers: {
+								"Content-Type": "application/json"
+								}
+								})
+								.then(resp => {
+									
+									return resp.json(); // (regresa una promesa) will try to parse the result as json as return a promise that you can .then for results
+								})
+								.then(data => {
+									//Aquí es donde debe comenzar tu código después de que finalice la búsqueda
+									console.log(data); //esto imprimirá en la consola el objeto exacto recibido del servidor
+								})
+								.catch(error => {
+									//manejo de errores
+									console.log(error);
+								});
+
+
+								setTodos(todos.filter((t, currentIndex) => index !=currentIndex))
+								}}></i>
 						</li>
 					))}
 				</ul>
