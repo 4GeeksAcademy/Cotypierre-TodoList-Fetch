@@ -69,9 +69,14 @@ const Home = () => {
 						<li key={index}>
 							{item.label} <i className="fas fa-trash-alt" onClick={() => {
 
+								console.log(todos)
+							
+								const filterTodos = todos.filter((t, currentIndex) => index !=currentIndex)
+									console.log(filterTodos)
+
 							fetch('https://playground.4geeks.com/apis/fake/todos/user/cotypierre', {
 								method: "PUT",
-								body: JSON.stringify(todos),
+								body: JSON.stringify(filterTodos),
 								headers: {
 								"Content-Type": "application/json"
 								}
@@ -90,7 +95,7 @@ const Home = () => {
 								});
 
 
-								setTodos(todos.filter((t, currentIndex) => index !=currentIndex))
+									setTodos(filterTodos)
 								}}></i>
 						</li>
 					))}
